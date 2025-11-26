@@ -1,0 +1,10 @@
+Average square meter price of real estate: 188000 Ft/m²
+The price of the cheapest property: 5556600 Ft
+The average square meter value per room of the most expensive apartment in Budapest: 25.00 m²/room
+The total price of the properties: 101756600 Ft
+List of condominium properties whose total price does not exceed the average price of properties:
+  - Debrecen (Panel) – 5556600 Ft
+  - Nyíregyháza (Panel) – 15640000 Ft
+  - Budapest (Panel) – 16380000 Ft
+Average square meter price of real estate: 188000 Ft/m²
+The total price of the properties: 101756600 Ft

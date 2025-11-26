@@ -1,6 +1,6 @@
 package realestate;
 
-public class RealEstate implements PropertyInterface {
+public class RealEstate implements PropertyInterface, Comparable<RealEstate> {
     protected String city;
     protected double price;        // price per sqm
     protected int sqm;
@@ -46,6 +46,11 @@ public class RealEstate implements PropertyInterface {
     public String toString() {
         return String.format("RealEstate [city=%s, price/m²=%.0f Ft, sqm=%d, rooms=%.1f, genre=%s, totalPrice=%d Ft, avgSqmPerRoom=%.2f]",
                 city, price, sqm, numberOfRooms, genre, getTotalPrice(), averageSqmPerRoom());
+    }
+
+    @Override
+    public int compareTo(RealEstate other) {
+        return Long.compare(this.getTotalPrice(), other.getTotalPrice());
     }
 
     // Getters (needed for Panel comparisons)

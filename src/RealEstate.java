@@ -1,13 +1,27 @@
 package realestate;
 
-public class RealEstate implements PropertyInterface, Comparable<RealEstate> {
+import java.util.logging.Logger;
+
+public class RealEstate implements PropertyInterface {
+    private static final Logger log = LoggerConfig.getLogger();
+
     protected String city;
-    protected double price;        // price per sqm
+    protected double price;        // price per square meter in HUF
     protected int sqm;
     protected double numberOfRooms;
     protected Genre genre;
 
+    /**
+     * Constructs a new RealEstate object.
+     *
+     * @param city           the city where the property is located
+     * @param price          price per square meter in HUF
+     * @param sqm            area in square meters
+     * @param numberOfRooms  number of rooms (can be half-room → double)
+     * @param genre          type of property (FAMILYHOUSE, CONDOMINIUM, FARM)
+     */
     public RealEstate(String city, double price, int sqm, double numberOfRooms, Genre genre) {
+        log.info("Creating RealEstate: " + city + ", " + sqm + " m²");
         this.city = city;
         this.price = price;
         this.sqm = sqm;
@@ -17,43 +31,40 @@ public class RealEstate implements PropertyInterface, Comparable<RealEstate> {
 
     @Override
     public void makeDiscount(int percentage) {
-        this.price = this.price * (100 - percentage) / 100.0;
+        log.info("Applying " + percentage + "% discount on " + city);
+        this.price *= (100 - percentage) / 100.0;
     }
 
     @Override
-    public long getTotalPrice() {
-        double basePrice = price * sqm;
-        double multiplier = 1.0;
+public long getTotalPrice() {
+    log.info("Calculating total price for property in " + city);
+    double basePrice = price * sqm;
 
-        if (city.equalsIgnoreCase("Budapest")) {
-            multiplier = 1.30;
-        } else if (city.equalsIgnoreCase("Debrecen")) {
-            multiplier = 1.20;
-        } else if (city.equalsIgnoreCase("Nyíregyháza")) {
-            multiplier = 1.15;
-        }
-
-        return Math.round(basePrice * multiplier);
+    double cityMultiplier = 1.0;
+    if ("budapest".equalsIgnoreCase(city)) {
+        cityMultiplier = 1.30;
+    } else if ("debrecen".equalsIgnoreCase(city)) {
+        cityMultiplier = 1.20;
+    } else if ("nyíregyháza".equalsIgnoreCase(city) || "nyiregyhaza".equalsIgnoreCase(city)) {
+        cityMultiplier = 1.15;
     }
+
+    return Math.round(basePrice * cityMultiplier);
+}
 
     @Override
     public double averageSqmPerRoom() {
-        if (numberOfRooms == 0) return 0;
-        return sqm / numberOfRooms;
+        log.info("Calculating average m²/room for " + city);
+        return numberOfRooms == 0 ? 0 : sqm / numberOfRooms;
     }
 
     @Override
     public String toString() {
-        return String.format("RealEstate [city=%s, price/m²=%.0f Ft, sqm=%d, rooms=%.1f, genre=%s, totalPrice=%d Ft, avgSqmPerRoom=%.2f]",
-                city, price, sqm, numberOfRooms, genre, getTotalPrice(), averageSqmPerRoom());
+        return String.format("RealEstate[city=%s, price/m²=%.0f Ft, sqm=%d, rooms=%.1f, genre=%s, total=%d Ft]",
+                city, price, sqm, numberOfRooms, genre, getTotalPrice());
     }
 
-    @Override
-    public int compareTo(RealEstate other) {
-        return Long.compare(this.getTotalPrice(), other.getTotalPrice());
-    }
-
-    // Getters (needed for Panel comparisons)
+    // Getters (for internal use)
     public String getCity() { return city; }
     public double getPrice() { return price; }
     public int getSqm() { return sqm; }

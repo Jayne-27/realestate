@@ -1,49 +1,49 @@
 package realestate;
 
+import java.util.logging.Logger;
+
+
 public class Panel extends RealEstate implements PanelInterface {
+    private static final Logger log = LoggerConfig.getLogger();
+
     private int floor;
     private boolean isInsulated;
 
     public Panel(String city, double price, int sqm, double numberOfRooms,
                  Genre genre, int floor, boolean isInsulated) {
         super(city, price, sqm, numberOfRooms, genre);
+        log.info("Creating Panel on floor " + floor + (isInsulated ? " (insulated)" : ""));
         this.floor = floor;
         this.isInsulated = isInsulated;
     }
 
     @Override
     public long getTotalPrice() {
-        double baseWithCity = super.getTotalPrice(); // includes city bonus
-        double modified = baseWithCity;
+        log.info("Calculating Panel total price (floor=" + floor + ", insulated=" + isInsulated + ")");
+        double price = super.getTotalPrice();
 
-        if (floor >= 0 && floor <= 2) {
-            modified *= 1.05;
-        } else if (floor == 10) {
-            modified *= 0.95;
-        }
+        if (floor >= 0 && floor <= 2) price *= 1.05;
+        else if (floor == 10) price *= 0.95;
+        if (isInsulated) price *= 1.05;
 
-        if (isInsulated) {
-            modified *= 1.05;
-        }
-
-        return Math.round(modified);
+        return Math.round(price);
     }
 
     @Override
     public boolean hasSameAmount(RealEstate other) {
+        log.info("Comparing total price with another property");
         return this.getTotalPrice() == other.getTotalPrice();
     }
 
     @Override
     public long roomprice() {
-        if (numberOfRooms == 0) return 0;
-        return Math.round((price * sqm) / numberOfRooms);
+        log.info("Calculating average room price (no modifiers)");
+        return numberOfRooms == 0 ? 0 : Math.round((price * sqm) / numberOfRooms);
     }
 
     @Override
     public String toString() {
-        return String.format("Panel [city=%s, price/m²=%.0f Ft, sqm=%d, rooms=%.1f, floor=%d, insulated=%s, totalPrice=%d Ft, avgSqmPerRoom=%.2f]",
-                city, price, sqm, numberOfRooms, floor, isInsulated ? "yes" : "no",
-                getTotalPrice(), averageSqmPerRoom());
+        return String.format("Panel[city=%s, floor=%d, insulated=%s, total=%d Ft]",
+                city, floor, isInsulated ? "yes" : "no", getTotalPrice());
     }
 }
